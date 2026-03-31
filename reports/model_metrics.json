@@ -1,0 +1,32 @@
+{
+  "dataset_size": 2740,
+  "top_categories": 10,
+  "train_size": 2192,
+  "test_size": 548,
+  "labels": [
+    "astro-ph",
+    "cond-mat.mes-hall",
+    "cond-mat.mtrl-sci",
+    "cond-mat.stat-mech",
+    "cond-mat.str-el",
+    "gr-qc",
+    "hep-ph",
+    "hep-th",
+    "math.AG",
+    "quant-ph"
+  ],
+  "logistic_regression": {
+    "accuracy": 0.7846715328467153,
+    "precision_macro": 0.8201883023819567,
+    "recall_macro": 0.6623357323353131,
+    "f1_macro": 0.7097456398324173,
+    "classification_report": "                    precision    recall  f1-score   support\n\n          astro-ph       0.76      0.98      0.86       195\n cond-mat.mes-hall       0.79      0.50      0.61        30\n cond-mat.mtrl-sci       0.71      0.36      0.48        33\ncond-mat.stat-mech       1.00      0.41      0.58        27\n   cond-mat.str-el       0.77      0.57      0.65        30\n             gr-qc       0.76      0.39      0.52        33\n            hep-ph       0.92      0.86      0.89        65\n            hep-th       0.70      0.85      0.77        61\n           math.AG       1.00      0.87      0.93        23\n          quant-ph       0.79      0.82      0.81        51\n\n          accuracy                           0.78       548\n         macro avg       0.82      0.66      0.71       548\n      weighted avg       0.80      0.78      0.77       548\n"
+  },
+  "mlp_classifier": {
+    "accuracy": 0.8448905109489051,
+    "precision_macro": 0.7999133915278807,
+    "recall_macro": 0.7842836894524454,
+    "f1_macro": 0.7899747855628395,
+    "classification_report": "                    precision    recall  f1-score   support\n\n          astro-ph       0.94      0.95      0.95       195\n cond-mat.mes-hall       0.79      0.63      0.70        30\n cond-mat.mtrl-sci       0.68      0.64      0.66        33\ncond-mat.stat-mech       0.83      0.70      0.76        27\n   cond-mat.str-el       0.66      0.70      0.68        30\n             gr-qc       0.59      0.61      0.60        33\n            hep-ph       0.90      0.86      0.88        65\n            hep-th       0.76      0.89      0.82        61\n           math.AG       0.96      1.00      0.98        23\n          quant-ph       0.90      0.86      0.88        51\n\n          accuracy                           0.84       548\n         macro avg       0.80      0.78      0.79       548\n      weighted avg       0.85      0.84      0.84       548\n"
+  }
+}
