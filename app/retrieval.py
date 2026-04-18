@@ -1,4 +1,5 @@
-﻿import json
+import json
+from functools import lru_cache
 from pathlib import Path
 
 import faiss
@@ -7,12 +8,14 @@ from sentence_transformers import SentenceTransformer
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
-MODELS_DIR = Path("models")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MODELS_DIR = PROJECT_ROOT / "models"
 EMBEDDINGS_PATH = MODELS_DIR / "embeddings.npy"
 FAISS_INDEX_PATH = MODELS_DIR / "faiss_index.bin"
 METADATA_PATH = MODELS_DIR / "embedding_metadata.jsonl"
 
 
+@lru_cache(maxsize=1)
 def load_metadata() -> list[dict]:
     """Load saved chunk metadata records."""
     if not METADATA_PATH.exists():
@@ -26,6 +29,18 @@ def load_metadata() -> list[dict]:
     return records
 
 
+@lru_cache(maxsize=1)
+def load_embedding_model() -> SentenceTransformer:
+    """Load the sentence-transformer once per process."""
+    return SentenceTransformer(MODEL_NAME)
+
+
+@lru_cache(maxsize=1)
+def load_faiss_index() -> faiss.Index:
+    """Load the persisted FAISS index once per process."""
+    return faiss.read_index(str(FAISS_INDEX_PATH))
+
+
 def retrieve_similar_chunks(query: str, top_k: int = 5) -> list[dict]:
     """Return the most similar chunks for a user query."""
     if not query.strip():
@@ -37,8 +52,8 @@ def retrieve_similar_chunks(query: str, top_k: int = 5) -> list[dict]:
     if not metadata:
         return []
 
-    model = SentenceTransformer(MODEL_NAME)
-    index = faiss.read_index(str(FAISS_INDEX_PATH))
+    model = load_embedding_model()
+    index = load_faiss_index()
     query_vector = model.encode([query], convert_to_numpy=True).astype("float32")
     distances, indices = index.search(query_vector, top_k)
 

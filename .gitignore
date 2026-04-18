@@ -26,7 +26,9 @@ Thumbs.db
 .env.*.local
 
 # Streamlit local config
-.streamlit/
+.streamlit/*
+!.streamlit/config.toml
+!.streamlit/secrets.toml.example
 
 # Ignore raw datasets and bulky generated intermediate data
 data/datasets/arxiv/arxiv-metadata-oai-snapshot.json

@@ -1,11 +1,12 @@
-﻿from functools import lru_cache
+from functools import lru_cache
 from pathlib import Path
 
 import joblib
 import numpy as np
 
 
-MODELS_DIR = Path("models")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+MODELS_DIR = PROJECT_ROOT / "models"
 LOGREG_MODEL_PATH = MODELS_DIR / "logistic_regression_pipeline.pkl"
 MLP_MODEL_PATH = MODELS_DIR / "mlp_classifier_pipeline.pkl"
 LABEL_ENCODER_PATH = MODELS_DIR / "label_encoder.pkl"

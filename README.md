@@ -7,10 +7,12 @@ ResearchRAG AI is an arXiv-based academic assistant that combines paper classifi
 - Paper classification using two trained local models
   - TF-IDF + Logistic Regression
   - TF-IDF + MLP Classifier
+- Title + abstract input flow aligned with the SRS classification requirement
 - Semantic search over arXiv papers using sentence-transformer embeddings and FAISS
 - Research question answering using Google Gemini API
 - Local fallback mode when Gemini is unavailable
 - Evaluation dashboard and EDA visualizations
+- Cleaner deployment-facing Streamlit interface with product-style layout
 
 ## Dataset
 
@@ -52,6 +54,9 @@ pip install -r requirements-dev.txt
 ### Runtime dependencies
 - Use `requirements.txt` for deployment
 
+### Included Streamlit config
+- `.streamlit/config.toml` is included for a consistent light theme in deployment
+
 ### Secrets
 Add the following in Streamlit Community Cloud secrets:
 
@@ -78,6 +83,7 @@ ARXIV_TOP_CATEGORIES = "10"
 - `reports/model_metrics.json`
 - `reports/model_comparison.csv`
 - `reports/EDA_SUMMARY.md`
+- `reports/SRS_ALIGNMENT_REVIEW.md`
 - `reports/SRS_ONE_PAGE_SUBMISSION.md`
 - `notebooks/arxiv_eda.ipynb`
 
