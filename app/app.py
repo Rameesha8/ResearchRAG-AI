@@ -86,6 +86,20 @@ def render_feature_card(title: str, body: str) -> None:
     )
 
 
+def render_spotlight_card(eyebrow: str, title: str, body: str) -> None:
+    """Render a premium editorial-style spotlight card."""
+    st.markdown(
+        f"""
+        <div class="spotlight-card">
+            <div class="spotlight-eyebrow">{eyebrow}</div>
+            <div class="spotlight-title">{title}</div>
+            <div class="spotlight-copy">{body}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_prediction_card(model_name: str, label: str, confidence: float, accent_class: str) -> None:
     """Render a prediction result card."""
     st.markdown(
@@ -159,7 +173,7 @@ best_model_value = f"{best_model_f1:.3f}" if isinstance(best_model_f1, (int, flo
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&display=swap');
 
     html, body, [class*="css"] {
         font-family: "Source Sans 3", sans-serif;
@@ -167,107 +181,122 @@ st.markdown(
     .stApp {
         color: #172031;
         background:
-            radial-gradient(circle at 12% 12%, rgba(245, 174, 74, 0.26), transparent 24%),
-            radial-gradient(circle at 88% 10%, rgba(36, 143, 155, 0.22), transparent 25%),
-            radial-gradient(circle at 50% 88%, rgba(17, 76, 95, 0.12), transparent 24%),
-            linear-gradient(180deg, #f5efe3 0%, #f8f7f2 46%, #eef4f7 100%);
+            radial-gradient(circle at 12% 10%, rgba(237, 183, 88, 0.32), transparent 23%),
+            radial-gradient(circle at 85% 8%, rgba(69, 149, 163, 0.22), transparent 24%),
+            radial-gradient(circle at 80% 88%, rgba(28, 74, 97, 0.12), transparent 21%),
+            linear-gradient(180deg, #f4ecdf 0%, #f9f6f1 44%, #edf5f7 100%);
     }
     .block-container {
         max-width: 1180px;
-        padding-top: 1.6rem;
-        padding-bottom: 3rem;
+        padding-top: 1.25rem;
+        padding-bottom: 3.5rem;
     }
-    h1, h2, h3, .hero-title, .section-title, .feature-title, .prediction-label, .source-title {
+    h1, h2, h3, .section-title, .feature-title, .prediction-label, .source-title {
         font-family: "Space Grotesk", sans-serif;
     }
     .hero-grid {
         display: grid;
-        grid-template-columns: 1.5fr 0.9fr;
+        grid-template-columns: 1.55fr 0.9fr;
         gap: 1rem;
-        margin-bottom: 1.2rem;
+        margin-bottom: 1rem;
     }
     .hero-panel, .hero-side-panel {
         position: relative;
         overflow: hidden;
-        border-radius: 30px;
-        padding: 2rem;
+        border-radius: 32px;
+        padding: 2.1rem;
         border: 1px solid rgba(17, 42, 58, 0.08);
-        box-shadow: 0 25px 70px rgba(18, 35, 45, 0.12);
+        box-shadow: 0 28px 80px rgba(18, 35, 45, 0.12);
     }
     .hero-panel {
         color: #f9fbfd;
         background:
-            linear-gradient(135deg, rgba(14, 55, 67, 0.94) 0%, rgba(23, 96, 111, 0.92) 48%, rgba(239, 164, 78, 0.88) 120%);
+            radial-gradient(circle at top right, rgba(255,255,255,0.16), transparent 26%),
+            linear-gradient(135deg, rgba(8, 45, 54, 0.98) 0%, rgba(19, 92, 105, 0.93) 50%, rgba(234, 169, 83, 0.86) 124%);
     }
     .hero-panel::after {
         content: "";
         position: absolute;
-        inset: auto -18% -28% auto;
-        width: 260px;
-        height: 260px;
-        background: radial-gradient(circle, rgba(255,255,255,0.25), transparent 65%);
-        filter: blur(8px);
+        inset: auto -14% -22% auto;
+        width: 320px;
+        height: 320px;
+        background: radial-gradient(circle, rgba(255,255,255,0.22), transparent 62%);
+        filter: blur(12px);
+    }
+    .hero-panel::before {
+        content: "";
+        position: absolute;
+        left: -6%;
+        top: -12%;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(244, 198, 125, 0.20), transparent 66%);
+        filter: blur(12px);
     }
     .hero-side-panel {
-        background: rgba(255, 255, 255, 0.72);
-        backdrop-filter: blur(14px);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(248, 252, 252, 0.74));
+        backdrop-filter: blur(16px);
     }
     .hero-kicker {
-        font-size: 0.82rem;
+        font-size: 0.78rem;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
-        opacity: 0.78;
+        letter-spacing: 0.22em;
+        opacity: 0.74;
         margin-bottom: 0.75rem;
     }
     .hero-title {
-        font-size: 3.2rem;
-        line-height: 0.98;
-        font-weight: 700;
-        margin: 0 0 0.9rem 0;
-        max-width: 10ch;
+        font-family: "Fraunces", serif;
+        font-size: 4rem;
+        line-height: 0.94;
+        font-weight: 600;
+        letter-spacing: -0.03em;
+        margin: 0 0 1rem 0;
+        max-width: 8ch;
     }
     .hero-copy {
-        font-size: 1.04rem;
-        line-height: 1.68;
-        max-width: 64ch;
+        font-size: 1.06rem;
+        line-height: 1.72;
+        max-width: 58ch;
         margin: 0;
         color: rgba(249, 251, 253, 0.94);
     }
     .hero-badges {
         display: flex;
         flex-wrap: wrap;
-        gap: 0.7rem;
+        gap: 0.72rem;
         margin-top: 1.25rem;
     }
     .hero-badge {
-        padding: 0.55rem 0.92rem;
+        padding: 0.58rem 0.96rem;
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.18);
         background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(10px);
         font-size: 0.88rem;
     }
     .hero-side-title {
-        font-size: 1.2rem;
+        font-size: 1.24rem;
         font-weight: 700;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.85rem;
         color: #113847;
     }
     .insight-stack {
         display: grid;
-        gap: 0.75rem;
+        gap: 0.8rem;
     }
     .insight-item {
-        padding: 0.95rem 1rem;
+        padding: 1rem 1.05rem;
         border-radius: 20px;
-        background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(244,248,250,0.8));
+        background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(243,248,249,0.84));
         border: 1px solid rgba(17, 42, 58, 0.08);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
     }
     .insight-label {
         font-size: 0.78rem;
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: #5c6d78;
-        margin-bottom: 0.3rem;
+        letter-spacing: 0.12em;
+        color: #60717d;
+        margin-bottom: 0.35rem;
     }
     .insight-value {
         font-size: 1.25rem;
@@ -276,9 +305,10 @@ st.markdown(
     }
     .status-card {
         border-radius: 24px;
-        padding: 1rem;
+        padding: 1.05rem 1rem;
         min-height: 118px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
+        border: 1px solid rgba(17, 42, 58, 0.06);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 16px 30px rgba(18, 35, 45, 0.05);
     }
     .status-card.warm {
         background: linear-gradient(180deg, #fff2d7 0%, #ffe1aa 100%);
@@ -289,7 +319,7 @@ st.markdown(
     .status-card.earth {
         background: linear-gradient(180deg, #e4f4e6 0%, #d2e8d6 100%);
     }
-    .status-card {
+    .status-card.rose {
         background: linear-gradient(180deg, #fde8e1 0%, #f8d1c5 100%);
     }
     .status-label {
@@ -308,15 +338,40 @@ st.markdown(
         color: #495869;
         font-size: 0.94rem;
     }
-    .feature-card, .section-panel, .prediction-card, .source-card, .evidence-card {
-        background: rgba(255, 255, 255, 0.78);
+    .spotlight-card, .feature-card, .section-panel, .prediction-card, .source-card, .evidence-card {
+        background: rgba(255, 255, 255, 0.80);
         border: 1px solid rgba(17, 42, 58, 0.08);
-        box-shadow: 0 14px 40px rgba(18, 35, 45, 0.08);
+        box-shadow: 0 16px 44px rgba(18, 35, 45, 0.08);
+    }
+    .spotlight-card {
+        border-radius: 28px;
+        padding: 1.2rem 1.15rem 1.15rem 1.15rem;
+        min-height: 176px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(249,251,252,0.84));
+    }
+    .spotlight-eyebrow {
+        font-size: 0.77rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: #6d7d88;
+        margin-bottom: 0.6rem;
+    }
+    .spotlight-title {
+        font-family: "Fraunces", serif;
+        font-size: 1.55rem;
+        line-height: 1.08;
+        color: #123645;
+        margin-bottom: 0.55rem;
+    }
+    .spotlight-copy {
+        color: #526173;
+        line-height: 1.62;
+        font-size: 1rem;
     }
     .feature-card {
-        border-radius: 22px;
-        padding: 1rem;
-        min-height: 150px;
+        border-radius: 24px;
+        padding: 1.15rem;
+        min-height: 165px;
     }
     .feature-title {
         font-size: 1.08rem;
@@ -329,9 +384,17 @@ st.markdown(
         line-height: 1.55;
     }
     .section-panel {
-        border-radius: 28px;
-        padding: 1.4rem;
-        margin-top: 0.4rem;
+        border-radius: 30px;
+        padding: 1.45rem;
+        margin-top: 0.55rem;
+        background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(250,252,252,0.74));
+        backdrop-filter: blur(14px);
+    }
+    .premium-divider {
+        height: 1px;
+        width: 100%;
+        margin: 0.15rem 0 1rem 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(18, 55, 71, 0.18) 18%, rgba(18, 55, 71, 0.08) 82%, transparent 100%);
     }
     .section-title {
         font-size: 1.4rem;
@@ -344,7 +407,7 @@ st.markdown(
     }
     .prediction-card {
         border-radius: 24px;
-        padding: 1rem;
+        padding: 1.05rem;
         min-height: 132px;
     }
     .prediction-card.teal {
@@ -371,15 +434,17 @@ st.markdown(
     }
     .consensus-banner {
         margin-top: 1rem;
-        padding: 0.95rem 1rem;
-        border-radius: 18px;
-        background: linear-gradient(135deg, rgba(18, 68, 85, 0.95), rgba(31, 118, 133, 0.92));
+        padding: 1rem 1.05rem;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(10, 51, 63, 0.98), rgba(28, 108, 122, 0.94));
         color: #f7fbfd;
+        box-shadow: 0 18px 34px rgba(15, 59, 72, 0.18);
     }
     .source-card {
         border-radius: 22px;
-        padding: 0.95rem 1rem 0.8rem 1rem;
+        padding: 1rem 1rem 0.85rem 1rem;
         margin: 0.9rem 0 0.55rem 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(244,248,250,0.84));
     }
     .source-rank {
         font-size: 0.78rem;
@@ -424,7 +489,7 @@ st.markdown(
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.45rem;
-        margin-bottom: 0.15rem;
+        margin-bottom: 0.3rem;
     }
     .stTabs [data-baseweb="tab-border"] {
         display: none;
@@ -434,10 +499,11 @@ st.markdown(
     }
     .stTabs [data-baseweb="tab"] {
         border-radius: 999px;
-        background: rgba(255,255,255,0.74);
+        background: rgba(255,255,255,0.80);
         border: 1px solid rgba(17, 42, 58, 0.08);
-        padding: 0.65rem 1rem;
+        padding: 0.7rem 1.05rem;
         height: auto;
+        box-shadow: 0 10px 24px rgba(18, 35, 45, 0.04);
     }
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #104754 0%, #1d6673 100%);
@@ -445,27 +511,34 @@ st.markdown(
     }
     .stTextInput input, .stTextArea textarea {
         border-radius: 18px !important;
-        border: 1px solid rgba(17, 42, 58, 0.12) !important;
-        background: rgba(255, 255, 255, 0.94) !important;
+        border: 1px solid rgba(17, 42, 58, 0.10) !important;
+        background: rgba(255, 255, 255, 0.97) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
     }
     .stButton > button, .stForm button {
         border-radius: 999px;
         border: none;
-        background: linear-gradient(135deg, #104754 0%, #1e7483 100%);
+        background: linear-gradient(135deg, #0d4450 0%, #1d6f7f 100%);
         color: white;
         font-weight: 700;
-        padding: 0.6rem 1.05rem;
+        padding: 0.62rem 1.15rem;
+        box-shadow: 0 14px 28px rgba(15, 59, 72, 0.18);
     }
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f1ece1 0%, #eef4f7 100%);
+        background:
+            radial-gradient(circle at top left, rgba(244, 194, 112, 0.16), transparent 24%),
+            linear-gradient(180deg, #f2ece0 0%, #edf4f6 100%);
         border-right: 1px solid rgba(17, 42, 58, 0.08);
+    }
+    section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2, section[data-testid="stSidebar"] h3 {
+        font-family: "Space Grotesk", sans-serif;
     }
     @media (max-width: 900px) {
         .hero-grid {
             grid-template-columns: 1fr;
         }
         .hero-title {
-            font-size: 2.35rem;
+            font-size: 2.9rem;
             max-width: none;
         }
     }
@@ -481,8 +554,9 @@ st.markdown(
             <div class="hero-kicker">Your AI Research Companion</div>
             <div class="hero-title">ResearchRAG AI</div>
             <p class="hero-copy">
-                Discover relevant papers faster, ask grounded research questions, and classify academic work
-                with an interface designed for focused exploration.
+                Navigate research with the feel of a premium scholarly workspace:
+                discover relevant papers, ask grounded questions, and classify academic work
+                without losing context.
             </p>
             <div class="hero-badges">
                 <div class="hero-badge">Ask with citations</div>
@@ -521,23 +595,26 @@ with status_columns[1]:
 with status_columns[2]:
     render_status_card("Classification", "Ready" if classification_ready else "Preparing", "Dual-model prediction", "earth")
 with status_columns[3]:
-    render_status_card("Experience", "Focused", "Built for end users", "rose")
+    render_status_card("Experience", "Focused", "Built for deep reading", "rose")
 
-feature_columns = st.columns(3)
-with feature_columns[0]:
-    render_feature_card(
-        "Research questions with evidence",
-        "Ask about methods, concepts, or themes and get answers supported by retrieved arXiv sources.",
+spotlight_columns = st.columns(3)
+with spotlight_columns[0]:
+    render_spotlight_card(
+        "Guided asking",
+        "Grounded answers",
+        "Move from vague curiosity to evidence-backed understanding with sources surfaced directly beside each response.",
     )
-with feature_columns[1]:
-    render_feature_card(
-        "Smarter semantic discovery",
-        "Find papers by meaning rather than relying only on exact title words or rigid keyword matches.",
+with spotlight_columns[1]:
+    render_spotlight_card(
+        "Search with nuance",
+        "Semantic discovery",
+        "Search by ideas, methods, and themes instead of forcing your exploration into exact-keyword queries.",
     )
-with feature_columns[2]:
-    render_feature_card(
-        "Quick paper categorization",
-        "Paste a paper title and abstract to compare how both trained models classify the work.",
+with spotlight_columns[2]:
+    render_spotlight_card(
+        "Instant triage",
+        "Paper classification",
+        "Drop in a title and abstract to quickly position a paper and compare how both local models interpret it.",
     )
 
 qa_tab, search_tab, prediction_tab, evidence_tab = st.tabs(
@@ -546,6 +623,7 @@ qa_tab, search_tab, prediction_tab, evidence_tab = st.tabs(
 
 with qa_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='premium-divider'></div>", unsafe_allow_html=True)
     st.markdown("<div class='section-title'>Ask citation-grounded research questions</div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='section-copy'>Use natural language to explore topics, methods, findings, and scientific trends across the indexed research collection.</div>",
@@ -577,6 +655,7 @@ with qa_tab:
 
 with search_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='premium-divider'></div>", unsafe_allow_html=True)
     st.markdown("<div class='section-title'>Discover papers by meaning</div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='section-copy'>Search with a concept, technique, or problem statement to surface semantically related papers.</div>",
@@ -604,6 +683,7 @@ with search_tab:
 
 with prediction_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='premium-divider'></div>", unsafe_allow_html=True)
     st.markdown("<div class='section-title'>Classify a paper</div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='section-copy'>Paste a title and abstract to see how the local classification models label the paper.</div>",
@@ -667,6 +747,7 @@ with prediction_tab:
 
 with evidence_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
+    st.markdown("<div class='premium-divider'></div>", unsafe_allow_html=True)
     st.markdown("<div class='section-title'>Explore collection insights</div>", unsafe_allow_html=True)
     st.markdown(
         "<div class='section-copy'>Browse a quick snapshot of model quality and dataset patterns behind the experience.</div>",
@@ -732,7 +813,7 @@ with evidence_tab:
 
 with st.sidebar:
     st.header("ResearchRAG AI")
-    st.caption("Explore, discover, and understand research faster.")
+    st.caption("A calmer, sharper way to work through research questions.")
 
     st.subheader("Try asking")
     st.markdown(
