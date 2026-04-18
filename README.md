@@ -1,27 +1,48 @@
-﻿# ResearchRAG AI
+# ResearchRAG AI
 
-ResearchRAG AI is an arXiv-based academic assistant that combines paper classification, semantic search, and citation-grounded question answering in a Streamlit web app.
+ResearchRAG AI is an arXiv-based academic research assistant that combines semantic paper discovery, paper classification, and citation-grounded question answering in a premium Streamlit interface.
 
-## Core Features
+## What The App Does
 
-- Paper classification using two trained local models
-  - TF-IDF + Logistic Regression
-  - TF-IDF + MLP Classifier
-- Title + abstract input flow aligned with the SRS classification requirement
-- Semantic search over arXiv papers using sentence-transformer embeddings and FAISS
-- Research question answering using Google Gemini API
-- Local fallback mode when Gemini is unavailable
-- Evaluation dashboard and EDA visualizations
-- Cleaner deployment-facing Streamlit interface with product-style layout
+- Ask research questions and receive retrieval-grounded answers with supporting arXiv sources
+- Discover papers through semantic search instead of exact keyword matching
+- Classify papers from title plus abstract using two trained local models
+- Explore model metrics and dataset insights through a dedicated insights section
+- Continue working in fallback mode when Gemini is unavailable
+
+## Models And Retrieval Stack
+
+### Classification
+- TF-IDF + Logistic Regression
+- TF-IDF + MLP Classifier
+
+### Retrieval And Q&A
+- Embedding model: `sentence-transformers/all-MiniLM-L6-v2`
+- Vector store: FAISS
+- Answer generation: Google Gemini API
+- Fallback mode: local retrieval-grounded answer synthesis plus local classifiers
+
+## User Experience
+
+The current app is designed as an end-user research workspace rather than a developer dashboard.
+
+Main product sections:
+- `Ask`: citation-grounded research Q&A
+- `Discover`: semantic paper search
+- `Classify`: title + abstract category prediction
+- `Insights`: model quality and collection visuals
 
 ## Dataset
 
-- arXiv Metadata Snapshot (Kaggle)
-- Link: https://www.kaggle.com/datasets/Cornell-University/arxiv
+- Source: arXiv Metadata Snapshot
+- Kaggle link: https://www.kaggle.com/datasets/Cornell-University/arxiv
 
-## Runtime Artifacts Used by the App
+The raw dataset is not committed to GitHub because it is too large. The deployed app uses prebuilt runtime artifacts instead.
 
-These files are required for the deployed app and are included in the repository:
+## Runtime Artifacts Included In The Repo
+
+These files are included so the Streamlit app can run without the raw dataset:
+
 - `models/faiss_index.bin`
 - `models/embedding_metadata.jsonl`
 - `models/faiss_index_metadata.json`
@@ -29,8 +50,6 @@ These files are required for the deployed app and are included in the repository
 - `models/mlp_classifier_pipeline.pkl`
 - `models/label_encoder.pkl`
 - `reports/eda_exports/*.png`
-
-The raw arXiv dataset file is not included in GitHub because it is too large.
 
 ## Local Setup
 
@@ -49,13 +68,13 @@ pip install -r requirements-dev.txt
 ## Streamlit Community Cloud Deployment
 
 ### Entrypoint
-- File path: `app/app.py`
+- `app/app.py`
 
-### Runtime dependencies
-- Use `requirements.txt` for deployment
+### Deployment dependencies
+- Use `requirements.txt`
 
-### Included Streamlit config
-- `.streamlit/config.toml` is included for a consistent light theme in deployment
+### Streamlit config
+- `.streamlit/config.toml` is included for the deployed theme
 
 ### Secrets
 Add the following in Streamlit Community Cloud secrets:
@@ -66,6 +85,10 @@ GEMINI_MODEL = "gemini-2.5-flash"
 ARXIV_MAX_RECORDS = "5000"
 ARXIV_TOP_CATEGORIES = "10"
 ```
+
+Notes:
+- `GEMINI_API_KEY` is the only sensitive value here
+- If Gemini is not configured, the app still works in fallback mode
 
 ## Local Development Commands
 
@@ -78,7 +101,7 @@ ARXIV_TOP_CATEGORIES = "10"
 .venv\Scripts\python app/export_eda.py
 ```
 
-## Reports and Documentation
+## Reports And Documentation
 
 - `reports/model_metrics.json`
 - `reports/model_comparison.csv`
@@ -87,6 +110,15 @@ ARXIV_TOP_CATEGORIES = "10"
 - `reports/SRS_ONE_PAGE_SUBMISSION.md`
 - `notebooks/arxiv_eda.ipynb`
 
-## Deployment Note
+## SRS Alignment
 
-This repo is prepared so the app can run on Streamlit Community Cloud without the raw dataset file, because the necessary runtime model and FAISS artifacts are already included.
+The project includes the required SRS capabilities:
+
+- Streamlit web application
+- Paper classification
+- Semantic retrieval
+- Citation-grounded research Q&A
+- Gemini integration
+- Offline fallback behavior
+- Saved local artifacts for deployment
+- Evaluation and EDA outputs
