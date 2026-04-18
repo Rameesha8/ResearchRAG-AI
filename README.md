@@ -42,6 +42,14 @@ Main product sections:
 
 ![ResearchRAG AI ask section](assets/screenshots/ask-section.png)
 
+### Semantic Search And Results
+
+![ResearchRAG AI semantic search screen](assets/screenshots/Screenshot%202026-04-18%20203500.png)
+
+### Classification Or Insights View
+
+![ResearchRAG AI additional app screen](assets/screenshots/Screenshot%202026-04-18%20203621.png)
+
 ## Dataset
 
 - Source: arXiv Metadata Snapshot
