@@ -21,7 +21,6 @@ PROJECT_ROOT = APP_DIR.parent
 DOTENV_PATH = PROJECT_ROOT / ".env"
 load_dotenv(dotenv_path=DOTENV_PATH)
 
-ARXIV_DATASET_PATH = PROJECT_ROOT / "data/datasets/arxiv/arxiv-metadata-oai-snapshot.json"
 FAISS_INDEX_PATH = PROJECT_ROOT / "models/faiss_index.bin"
 FAISS_INFO_PATH = PROJECT_ROOT / "models/faiss_index_metadata.json"
 METADATA_PATH = PROJECT_ROOT / "models/embedding_metadata.jsonl"
@@ -149,7 +148,6 @@ comparison_df = load_comparison_table()
 faiss_info = load_json_file(FAISS_INFO_PATH) or {}
 eda_summary = load_markdown_file(EDA_SUMMARY_PATH)
 
-dataset_ready = ARXIV_DATASET_PATH.exists()
 index_ready = FAISS_INDEX_PATH.exists() and METADATA_PATH.exists()
 classification_ready = LOGREG_MODEL_PATH.exists() and MLP_MODEL_PATH.exists()
 gemini_ready = bool(os.getenv("GEMINI_API_KEY"))
@@ -184,7 +182,7 @@ st.markdown(
     }
     .hero-grid {
         display: grid;
-        grid-template-columns: 1.45fr 0.95fr;
+        grid-template-columns: 1.5fr 0.9fr;
         gap: 1rem;
         margin-bottom: 1.2rem;
     }
@@ -222,7 +220,7 @@ st.markdown(
         margin-bottom: 0.75rem;
     }
     .hero-title {
-        font-size: 3.1rem;
+        font-size: 3.2rem;
         line-height: 0.98;
         font-weight: 700;
         margin: 0 0 0.9rem 0;
@@ -291,7 +289,7 @@ st.markdown(
     .status-card.earth {
         background: linear-gradient(180deg, #e4f4e6 0%, #d2e8d6 100%);
     }
-    .status-card.rose {
+    .status-card {
         background: linear-gradient(180deg, #fde8e1 0%, #f8d1c5 100%);
     }
     .status-label {
@@ -309,14 +307,6 @@ st.markdown(
     .status-caption {
         color: #495869;
         font-size: 0.94rem;
-    }
-    .mode-banner {
-        margin: 1rem 0 1.2rem 0;
-        border-radius: 18px;
-        padding: 1rem 1.1rem;
-        background: rgba(255, 255, 255, 0.78);
-        border: 1px solid rgba(17, 42, 58, 0.08);
-        box-shadow: 0 12px 30px rgba(18, 35, 45, 0.06);
     }
     .feature-card, .section-panel, .prediction-card, .source-card, .evidence-card {
         background: rgba(255, 255, 255, 0.78);
@@ -340,7 +330,8 @@ st.markdown(
     }
     .section-panel {
         border-radius: 28px;
-        padding: 1.2rem 1.2rem 1.4rem 1.2rem;
+        padding: 1.4rem;
+        margin-top: 0.4rem;
     }
     .section-title {
         font-size: 1.4rem;
@@ -433,7 +424,13 @@ st.markdown(
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.45rem;
-        margin-bottom: 0.9rem;
+        margin-bottom: 0.15rem;
+    }
+    .stTabs [data-baseweb="tab-border"] {
+        display: none;
+    }
+    .stTabs [data-baseweb="tab-highlight"] {
+        display: none;
     }
     .stTabs [data-baseweb="tab"] {
         border-radius: 999px;
@@ -481,33 +478,32 @@ st.markdown(
     f"""
     <div class="hero-grid">
         <div class="hero-panel">
-            <div class="hero-kicker">Citation-grounded academic assistant</div>
+            <div class="hero-kicker">Your AI Research Companion</div>
             <div class="hero-title">ResearchRAG AI</div>
             <p class="hero-copy">
-                Search the arXiv subset semantically, classify papers from title plus abstract,
-                and answer research questions with retrieval-backed evidence. The interface is
-                tuned for exploration, not pipeline debugging.
+                Discover relevant papers faster, ask grounded research questions, and classify academic work
+                with an interface designed for focused exploration.
             </p>
             <div class="hero-badges">
-                <div class="hero-badge">Semantic Retrieval</div>
-                <div class="hero-badge">Gemini + Fallback</div>
-                <div class="hero-badge">Dual Classifiers</div>
-                <div class="hero-badge">Evaluation Ready</div>
+                <div class="hero-badge">Ask with citations</div>
+                <div class="hero-badge">Search by meaning</div>
+                <div class="hero-badge">Classify papers</div>
+                <div class="hero-badge">Explore trends</div>
             </div>
         </div>
         <div class="hero-side-panel">
-            <div class="hero-side-title">Project Snapshot</div>
+            <div class="hero-side-title">At a Glance</div>
             <div class="insight-stack">
                 <div class="insight-item">
-                    <div class="insight-label">Indexed Chunks</div>
+                    <div class="insight-label">Indexed Research Chunks</div>
                     <div class="insight-value">{vector_count}</div>
                 </div>
                 <div class="insight-item">
-                    <div class="insight-label">Top Categories Used for Classification</div>
+                    <div class="insight-label">Research Categories Covered</div>
                     <div class="insight-value">{top_categories}</div>
                 </div>
                 <div class="insight-item">
-                    <div class="insight-label">Best Local Macro F1</div>
+                    <div class="insight-label">Best Local Model F1</div>
                     <div class="insight-value">{best_model_value}</div>
                 </div>
             </div>
@@ -519,110 +515,98 @@ st.markdown(
 
 status_columns = st.columns(4)
 with status_columns[0]:
-    render_status_card("Dataset", "Ready" if dataset_ready else "Missing", "Raw corpus available locally", "warm")
+    render_status_card("Search", "Ready" if index_ready else "Preparing", "Meaning-based retrieval", "warm")
 with status_columns[1]:
-    render_status_card("Semantic Index", "Ready" if index_ready else "Pending", "FAISS retrieval assets", "cool")
+    render_status_card("Answers", "Live" if gemini_ready else "Grounded", "Research Q&A experience", "cool")
 with status_columns[2]:
-    render_status_card("Classification", "Ready" if classification_ready else "Pending", "Dual local models", "earth")
+    render_status_card("Classification", "Ready" if classification_ready else "Preparing", "Dual-model prediction", "earth")
 with status_columns[3]:
-    render_status_card("Generation", "Gemini" if gemini_ready else "Fallback", "Live API or local evidence mode", "rose")
-
-if gemini_ready:
-    st.markdown(
-        f"<div class='mode-banner'><strong>Live answer generation is enabled.</strong> Gemini is configured with <code>{GEMINI_MODEL}</code>, and the app will still fall back to retrieval-grounded local mode if the API fails.</div>",
-        unsafe_allow_html=True,
-    )
-else:
-    st.markdown(
-        "<div class='mode-banner'><strong>Fallback mode is active.</strong> The app still supports semantic retrieval and local category prediction, and research answers are composed from retrieved evidence when Gemini is unavailable.</div>",
-        unsafe_allow_html=True,
-    )
+    render_status_card("Experience", "Focused", "Built for end users", "rose")
 
 feature_columns = st.columns(3)
 with feature_columns[0]:
     render_feature_card(
-        "Ask better research questions",
-        "Use natural language instead of exact keyword matching. The system retrieves semantically relevant arXiv records before answering.",
+        "Research questions with evidence",
+        "Ask about methods, concepts, or themes and get answers supported by retrieved arXiv sources.",
     )
 with feature_columns[1]:
     render_feature_card(
-        "Classify papers the SRS way",
-        "The classifier now accepts a paper title and abstract separately, matching the stated requirement for category prediction.",
+        "Smarter semantic discovery",
+        "Find papers by meaning rather than relying only on exact title words or rigid keyword matches.",
     )
 with feature_columns[2]:
     render_feature_card(
-        "Keep the product surface clean",
-        "Developer pipeline controls and manual shell commands have been removed from the main UI so the app feels deployment-ready.",
+        "Quick paper categorization",
+        "Paste a paper title and abstract to compare how both trained models classify the work.",
     )
 
 qa_tab, search_tab, prediction_tab, evidence_tab = st.tabs(
-    ["Research Q&A", "Semantic Search", "Category Prediction", "Project Evidence"]
+    ["Ask", "Discover", "Classify", "Insights"]
 )
 
 with qa_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Citation-grounded answers</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Ask citation-grounded research questions</div>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='section-copy'>Ask about methods, topics, trends, or technical concepts. Answers are generated only after retrieving supporting arXiv context.</div>",
+        "<div class='section-copy'>Use natural language to explore topics, methods, findings, and scientific trends across the indexed research collection.</div>",
         unsafe_allow_html=True,
     )
     with st.form("qa_form"):
         question = st.text_area(
-            "Research question",
+            "Your question",
             height=130,
             placeholder="Example: What themes appear in recent work on quantum error correction, and which retrieved papers support them?",
         )
-        result_count = st.slider("Sources to use", min_value=3, max_value=10, value=5, key="qa_slider")
+        result_count = st.slider("How many sources should support the answer?", min_value=3, max_value=10, value=5, key="qa_slider")
         ask_clicked = st.form_submit_button("Generate Answer")
 
     if ask_clicked:
         if not question.strip():
             st.warning("Enter a research question first.")
         elif not index_ready:
-            st.warning("The semantic index is not available yet, so retrieval-backed Q&A cannot run.")
+            st.warning("Search resources are still preparing. Please try again shortly.")
         else:
-            with st.spinner("Retrieving supporting papers and composing the answer..."):
+            with st.spinner("Retrieving sources and preparing your answer..."):
                 qa_results = retrieve_similar_chunks(question, top_k=result_count)
-                answer, mode = generate_answer(question, qa_results)
+                answer, _mode = generate_answer(question, qa_results)
             st.markdown("### Answer")
             st.write(answer)
-            st.caption(f"Answer mode: {mode}")
             render_context_results(qa_results, "Supporting Sources")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 with search_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Meaning-based paper search</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Discover papers by meaning</div>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='section-copy'>Search by concept, method, or problem statement. This is useful when exact titles or keywords are unknown.</div>",
+        "<div class='section-copy'>Search with a concept, technique, or problem statement to surface semantically related papers.</div>",
         unsafe_allow_html=True,
     )
     with st.form("semantic_search_form"):
         search_query = st.text_input(
-            "Semantic search query",
+            "Search topic",
             placeholder="Example: graph sparsity for large-scale optimization",
         )
-        search_count = st.slider("Results to show", min_value=3, max_value=10, value=5, key="search_slider")
-        search_clicked = st.form_submit_button("Run Semantic Search")
+        search_count = st.slider("How many results would you like?", min_value=3, max_value=10, value=5, key="search_slider")
+        search_clicked = st.form_submit_button("Search Papers")
 
     if search_clicked:
         if not search_query.strip():
             st.warning("Enter a concept or topic to search.")
         elif not index_ready:
-            st.warning("The semantic index is not available yet.")
+            st.warning("Search resources are still preparing. Please try again shortly.")
         else:
-            with st.spinner("Searching the vector index..."):
+            with st.spinner("Searching for related papers..."):
                 search_results = retrieve_similar_chunks(search_query, top_k=search_count)
-            render_context_results(search_results, "Best Matching Papers")
+            render_context_results(search_results, "Best Matches")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 with prediction_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Paper category prediction</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Classify a paper</div>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='section-copy'>Paste the title and abstract of a paper. Both trained local models score the combined text so you can compare their predictions side by side.</div>",
+        "<div class='section-copy'>Paste a title and abstract to see how the local classification models label the paper.</div>",
         unsafe_allow_html=True,
     )
     with st.form("prediction_form"):
@@ -644,7 +628,7 @@ with prediction_tab:
         else:
             predictions = predict_with_local_models(combined_text)
             if not predictions:
-                st.warning("The trained local models are not available yet.")
+                st.warning("Classification resources are still preparing. Please try again shortly.")
             else:
                 prediction_cols = st.columns(2)
                 if "logistic_regression" in predictions:
@@ -672,7 +656,7 @@ with prediction_tab:
                 st.markdown(
                     f"""
                     <div class="consensus-banner">
-                        <strong>Highest-confidence prediction:</strong> {best_details["label"]} from {best_model_name}
+                        <strong>Top prediction:</strong> {best_details["label"]} from {best_model_name}
                         at {best_details["confidence"]:.2%}.
                     </div>
                     """,
@@ -683,31 +667,31 @@ with prediction_tab:
 
 with evidence_tab:
     st.markdown("<div class='section-panel'>", unsafe_allow_html=True)
-    st.markdown("<div class='section-title'>Evaluation and dataset evidence</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-title'>Explore collection insights</div>", unsafe_allow_html=True)
     st.markdown(
-        "<div class='section-copy'>This section keeps the most important supporting evidence visible for reviewers, recruiters, or deployment judges.</div>",
+        "<div class='section-copy'>Browse a quick snapshot of model quality and dataset patterns behind the experience.</div>",
         unsafe_allow_html=True,
     )
 
     evidence_cols = st.columns(3)
     with evidence_cols[0]:
         render_feature_card(
-            "Dataset footprint",
-            f"Indexed vectors: {vector_count}. Local raw dataset status: {'available' if dataset_ready else 'not bundled in deployment build'}.",
+            "Collection size",
+            f"The current research index contains {vector_count} searchable text chunks.",
         )
     with evidence_cols[1]:
         render_feature_card(
-            "Best local model",
-            f"MLP classifier macro F1: {best_model_value}. This is the strongest local fallback classifier in the saved evaluation report.",
+            "Strongest local model",
+            f"The best saved local classifier currently reaches a macro F1 score of {best_model_value}.",
         )
     with evidence_cols[2]:
         render_feature_card(
-            "Fallback resilience",
-            "If Gemini is unavailable, the app still answers using retrieval evidence and still supports both local classifiers.",
+            "Category coverage",
+            f"The classification workflow is focused on the top {top_categories} research categories in the prepared subset.",
         )
 
     if metrics:
-        st.markdown("### Model Metrics")
+        st.markdown("### Model Quality")
         metrics_cols = st.columns(2)
         with metrics_cols[0]:
             logreg = metrics.get("logistic_regression", {})
@@ -716,7 +700,7 @@ with evidence_tab:
                 <div class="evidence-card">
                     <div class="evidence-title">Logistic Regression</div>
                     <div class="evidence-value">{logreg.get("f1_macro", 0.0):.3f}</div>
-                    <div class="evidence-copy">Macro F1 with TF-IDF features.</div>
+                    <div class="evidence-copy">Macro F1 score.</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -728,7 +712,7 @@ with evidence_tab:
                 <div class="evidence-card">
                     <div class="evidence-title">MLP Classifier</div>
                     <div class="evidence-value">{mlp.get("f1_macro", 0.0):.3f}</div>
-                    <div class="evidence-copy">Best-performing saved local classifier.</div>
+                    <div class="evidence-copy">Macro F1 score.</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -739,31 +723,30 @@ with evidence_tab:
         st.dataframe(comparison_df, use_container_width=True, hide_index=True)
 
     if eda_summary:
-        st.markdown("### EDA Summary")
+        st.markdown("### Collection Summary")
         st.markdown(eda_summary)
 
-    st.markdown("### EDA Visuals")
+    st.markdown("### Visual Trends")
     render_eda_images()
     st.markdown("</div>", unsafe_allow_html=True)
 
 with st.sidebar:
     st.header("ResearchRAG AI")
-    st.caption("A cleaner deployment-facing control panel.")
+    st.caption("Explore, discover, and understand research faster.")
 
-    st.subheader("Availability")
-    st.write(f"{'Ready' if dataset_ready else 'Missing'} Dataset")
-    st.write(f"{'Ready' if index_ready else 'Pending'} Semantic index")
-    st.write(f"{'Ready' if classification_ready else 'Pending'} Classification models")
-    st.write(f"{'Gemini' if gemini_ready else 'Fallback'} Answer mode")
-
-    st.subheader("Recommended prompts")
+    st.subheader("Try asking")
     st.markdown(
         "- What retrieval evidence supports current work on quantum optics?\n"
-        "- Find papers related to graph sparsity in optimization.\n"
-        "- Predict the likely arXiv category for this abstract."
+        "- Which papers relate to graph sparsity in optimization?\n"
+        "- What themes appear across recent work on scientific language models?"
     )
 
-    st.subheader("Deployment notes")
-    st.caption(
-        "Use `app/app.py` as the Streamlit entrypoint. Configure `GEMINI_API_KEY` in Streamlit secrets to enable live generation."
+    st.subheader("Try discovering")
+    st.markdown(
+        "- diffusion models for medical imaging\n"
+        "- retrieval-augmented generation in science\n"
+        "- topological phases in condensed matter"
     )
+
+    st.subheader("Try classifying")
+    st.caption("Paste a paper title and abstract to compare model predictions.")
