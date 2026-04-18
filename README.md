@@ -32,6 +32,16 @@ Main product sections:
 - `Classify`: title + abstract category prediction
 - `Insights`: model quality and collection visuals
 
+## Screenshots
+
+### Home Experience
+
+![ResearchRAG AI home screen](assets/screenshots/home-hero.png)
+
+### Ask Workflow
+
+![ResearchRAG AI ask section](assets/screenshots/ask-section.png)
+
 ## Dataset
 
 - Source: arXiv Metadata Snapshot
