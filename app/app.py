@@ -246,12 +246,13 @@ st.markdown(
     }
     .hero-title {
         font-family: "Fraunces", serif;
-        font-size: 4rem;
+        font-size: 3.5rem;
         line-height: 0.94;
         font-weight: 600;
         letter-spacing: -0.03em;
         margin: 0 0 1rem 0;
-        max-width: 8ch;
+        max-width: none;
+        white-space: nowrap;
     }
     .hero-copy {
         font-size: 1.06rem;
@@ -538,8 +539,9 @@ st.markdown(
             grid-template-columns: 1fr;
         }
         .hero-title {
-            font-size: 2.9rem;
+            font-size: 2.7rem;
             max-width: none;
+            white-space: normal;
         }
     }
     </style>
@@ -552,7 +554,7 @@ st.markdown(
     <div class="hero-grid">
         <div class="hero-panel">
             <div class="hero-kicker">Your AI Research Companion</div>
-            <div class="hero-title">ResearchRAG AI</div>
+            <div class="hero-title">ResearchRAG&nbsp;AI</div>
             <p class="hero-copy">
                 Navigate research with the feel of a premium scholarly workspace:
                 discover relevant papers, ask grounded questions, and classify academic work
