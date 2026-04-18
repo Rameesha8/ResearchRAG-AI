@@ -4,6 +4,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pandas as pd
 import streamlit as st
 from dotenv import load_dotenv
 
@@ -29,6 +30,7 @@ METADATA_PATH = PROJECT_ROOT / "models/embedding_metadata.jsonl"
 LOGREG_MODEL_PATH = PROJECT_ROOT / "models/logistic_regression_pipeline.pkl"
 MLP_MODEL_PATH = PROJECT_ROOT / "models/mlp_classifier_pipeline.pkl"
 METRICS_PATH = PROJECT_ROOT / "reports/model_metrics.json"
+COMPARISON_PATH = PROJECT_ROOT / "reports/model_comparison.csv"
 EDA_DIR = PROJECT_ROOT / "reports/eda_exports"
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
@@ -53,8 +55,16 @@ def load_metrics() -> dict | None:
     return json.loads(METRICS_PATH.read_text(encoding="utf-8"))
 
 
-def render_context_results(results: list[dict]) -> None:
+def load_comparison_table() -> pd.DataFrame | None:
+    """Load saved model comparison table if present."""
+    if not COMPARISON_PATH.exists():
+        return None
+    return pd.read_csv(COMPARISON_PATH)
+
+
+def render_context_results(results: list[dict], title: str = "Supporting Sources") -> None:
     """Render retrieved context cleanly for presentation."""
+    st.subheader(title)
     if not results:
         st.info("No retrieval results were found.")
         return
@@ -71,29 +81,50 @@ def render_context_results(results: list[dict]) -> None:
             st.write(result.get("text", ""))
 
 
+def render_eda_images() -> None:
+    """Render exported EDA charts if they exist."""
+    plots = [
+        ("Top Category Distribution", EDA_DIR / "top_category_distribution.png"),
+        ("Title Length Distribution", EDA_DIR / "title_length_distribution.png"),
+        ("Abstract Length Distribution", EDA_DIR / "abstract_length_distribution.png"),
+    ]
+    for heading, image_path in plots:
+        if image_path.exists():
+            st.markdown(f"**{heading}**")
+            st.image(str(image_path), use_container_width=True)
+        else:
+            st.info(f"EDA asset not found: {image_path.name}")
+
+
 st.set_page_config(page_title="ResearchRAG AI", layout="wide")
 
 st.title("ResearchRAG AI")
 st.write(
-    "An arXiv-based academic assistant for category prediction and citation-grounded question answering."
+    "An intelligent academic assistant for paper classification, semantic search, and citation-grounded question answering over the arXiv dataset."
 )
 
-hero_col1, hero_col2, hero_col3 = st.columns(3)
-hero_col1.metric("Retrieval Index", "Ready" if FAISS_INDEX_PATH.exists() and METADATA_PATH.exists() else "Pending")
-hero_col2.metric("ML Model", "Ready" if LOGREG_MODEL_PATH.exists() else "Pending")
-hero_col3.metric("DL Model", "Ready" if MLP_MODEL_PATH.exists() else "Pending")
+hero_col1, hero_col2, hero_col3, hero_col4 = st.columns(4)
+hero_col1.metric("Dataset", "Ready" if ARXIV_DATASET_PATH.exists() else "Missing")
+hero_col2.metric("Semantic Index", "Ready" if FAISS_INDEX_PATH.exists() and METADATA_PATH.exists() else "Pending")
+hero_col3.metric("ML Model", "Ready" if LOGREG_MODEL_PATH.exists() else "Pending")
+hero_col4.metric("DL Model", "Ready" if MLP_MODEL_PATH.exists() else "Pending")
 
 if os.getenv("GEMINI_API_KEY"):
     st.success(f"Gemini mode enabled with model `{GEMINI_MODEL}`")
 else:
     st.info("Gemini key not found. The app will use the trained local fallback mode.")
 
-main_tab1, main_tab2, main_tab3 = st.tabs(["Research Q&A", "Category Prediction", "Model Summary"])
+main_tab1, main_tab2, main_tab3, main_tab4 = st.tabs([
+    "Research Q&A",
+    "Semantic Search",
+    "Category Prediction",
+    "Evaluation & EDA",
+])
 
 with main_tab1:
-    st.subheader("Ask About the Corpus")
-    question = st.text_input("Enter a research question")
-    result_count = st.slider("Retrieved sources", min_value=3, max_value=10, value=5, key="qa_slider")
+    st.subheader("Research Question Answering")
+    question = st.text_input("Ask a question about the arXiv corpus")
+    result_count = st.slider("Retrieved sources for Q&A", min_value=3, max_value=10, value=5, key="qa_slider")
 
     if question:
         if not FAISS_INDEX_PATH.exists() or not METADATA_PATH.exists():
@@ -106,11 +137,23 @@ with main_tab1:
             st.subheader("Answer")
             st.write(answer)
             st.caption(f"Answer mode: {mode}")
-            st.subheader("Supporting Sources")
             render_context_results(results)
 
 with main_tab2:
-    st.subheader("Predict Paper Category")
+    st.subheader("Semantic Search")
+    search_query = st.text_input("Search semantically for related academic papers", key="semantic_query")
+    search_count = st.slider("Retrieved sources for search", min_value=3, max_value=10, value=5, key="search_slider")
+
+    if search_query:
+        if not FAISS_INDEX_PATH.exists() or not METADATA_PATH.exists():
+            st.warning("The vector store is not ready yet. Run the indexing pipeline first.")
+        else:
+            with st.spinner("Searching the semantic index..."):
+                search_results = retrieve_similar_chunks(search_query, top_k=search_count)
+            render_context_results(search_results, title="Top Semantic Search Results")
+
+with main_tab3:
+    st.subheader("Paper Category Prediction")
     paper_text = st.text_area(
         "Paste a paper title and/or abstract",
         height=220,
@@ -130,16 +173,23 @@ with main_tab2:
         else:
             st.warning("Trained local models are not ready yet. Run model training first.")
 
-with main_tab3:
-    st.subheader("Current Model Performance")
+with main_tab4:
+    st.subheader("Model Evaluation")
     metrics = load_metrics()
+    comparison_df = load_comparison_table()
+
     if metrics:
         metric_col1, metric_col2 = st.columns(2)
         metric_col1.metric("LogReg Macro F1", f"{metrics['logistic_regression']['f1_macro']:.3f}")
         metric_col2.metric("MLP Macro F1", f"{metrics['mlp_classifier']['f1_macro']:.3f}")
-        st.write("The MLP classifier is currently the stronger local category model on the top-10-category arXiv subset.")
     else:
         st.info("Training metrics are not available yet.")
+
+    if comparison_df is not None:
+        st.dataframe(comparison_df, use_container_width=True)
+
+    st.subheader("EDA Visuals")
+    render_eda_images()
 
 with st.sidebar:
     st.header("Project Controls")

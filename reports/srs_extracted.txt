@@ -1,0 +1,58 @@
+Software Requirements Specification (SRS) 
+ResearchRAG AI – Intelligent Academic Research Assistant 
+1. Project Name & Background  
+ 
+Project Name: ResearchRAG AI 
+ Background: Researchers face difficulty finding relevant papers, classifying topics, and 
+extracting insights efficiently. Traditional keyword search lacks semantic understanding 
+and citation grounding. 
+ Problem Statement: Current tools lack an integrated solution for combining semantic 
+search, automatic classification, and citation-grounded question answering in one system. 
+2. Objectives: 
+a. Paper Classification: Title + abstract → category prediction (ML models) 
+b. Research Q&A (RAG): Retrieve papers → citation-based answers (Gemini API) 
+c. Semantic Search: Embedding-based similarity search 
+d. Fallback Mode: Local predictions + retrieved context if API unavailable 
+e. Interface: Streamlit web app 
+3. Scope & Solution 
+Aspect 
+Details 
+Scope 
+arXiv dataset, paper classification, semantic retrieval, Q&A, evaluation, visualization 
+ML Models 
+TF-IDF + Logistic Regression 
+TF-IDF + MLP Classifier 
+Metrics: Accuracy, Precision, Recall, F1-score 
+RAG System 
+Embeddings: sentence-
+transformers/all-MiniLM-
+L6-v2 
+Vector DB: FAISS 
+Answer Generation: Google Gemini API 
+Fallback: trained local models + retrieval-grounded evidence 
+Tech Stack 
+Streamlit, Python, Scikit-learn, FAISS, Google Gemini API, sentence-transformers 
+ 
+4. Comparison with Existing Projects 
+ 
+PaperQA2: Research paper Q&A with citations ( https://github.com/whitead/paper-qa ) 
+ 
+Elicit: Literature search & summarization ( https://elicit.com ) 
+Edge of ResearchRAG AI: 
+a. Combines ML classification + RAG 
+b. Citation-grounded answers 
+c. Offline fallback 
+d. Fully deployable academic assistant 
+5. Dataset 
+a. Kaggle: https://www.kaggle.com/datasets/Cornell-University/arxiv 
+6. Deliverables & Resources 
+Deliverables: 
+a. GitHub repo: code, notebooks, reports, documentation 
+b. Streamlit App: classification + Q&A 
+c. Saved local model artifacts (.pkl) used by the app 
+d. EDA & evaluation reports 
+e. Final report + slides 
+Resources: 
+f. GitHub: https://github.com/Rameesha8/ResearchRAG-AI 
+g. Deployment: Streamlit Community Cloud 
+h. Gemini API Docs: https://ai.google.dev/gemini-api/docs/quickstart 
