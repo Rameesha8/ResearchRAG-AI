@@ -33,6 +33,8 @@ data/datasets/arxiv/arxiv-metadata-oai-snapshot.json
 data/raw_pdfs/
 data/extracted_text/
 data/chunks/
+data/processed_text/arxiv_documents.jsonl
+
 
 # Ignore large or unnecessary local artifacts
 models/embeddings.npy
