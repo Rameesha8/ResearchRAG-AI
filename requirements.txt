@@ -1,14 +1,11 @@
 ﻿streamlit
-pymupdf
 sentence-transformers
 faiss-cpu
 numpy
 pandas
 scikit-learn
-tqdm
 python-dotenv
 google-genai
 joblib
 matplotlib
 seaborn
-notebook

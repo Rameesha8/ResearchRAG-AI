@@ -88,17 +88,14 @@ def train_models() -> None:
 
     logreg_pipeline = Pipeline(
         [
-            ("tfidf", TfidfVectorizer(max_features=10000, ngram_range=(1, 2), stop_words="english")),
+            ("tfidf", TfidfVectorizer(max_features=6000, ngram_range=(1, 2), stop_words="english")),
             ("classifier", LogisticRegression(max_iter=1000)),
         ]
     )
     mlp_pipeline = Pipeline(
         [
-            ("tfidf", TfidfVectorizer(max_features=10000, ngram_range=(1, 2), stop_words="english")),
-            (
-                "classifier",
-                MLPClassifier(hidden_layer_sizes=(256, 128), max_iter=25, early_stopping=False, random_state=42),
-            ),
+            ("tfidf", TfidfVectorizer(max_features=2000, ngram_range=(1, 2), stop_words="english")),
+            ("classifier", MLPClassifier(hidden_layer_sizes=(64,), max_iter=20, early_stopping=False, random_state=42)),
         ]
     )
 
@@ -108,9 +105,9 @@ def train_models() -> None:
     logreg_metrics = evaluate_model(logreg_pipeline, x_test, y_test)
     mlp_metrics = evaluate_model(mlp_pipeline, x_test, y_test_encoded, label_encoder=label_encoder)
 
-    joblib.dump(logreg_pipeline, LOGREG_MODEL_PATH)
-    joblib.dump(mlp_pipeline, MLP_MODEL_PATH)
-    joblib.dump(label_encoder, LABEL_ENCODER_PATH)
+    joblib.dump(logreg_pipeline, LOGREG_MODEL_PATH, compress=3)
+    joblib.dump(mlp_pipeline, MLP_MODEL_PATH, compress=3)
+    joblib.dump(label_encoder, LABEL_ENCODER_PATH, compress=3)
 
     metrics = {
         "dataset_size": int(len(dataframe)),

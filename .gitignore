@@ -28,16 +28,21 @@ Thumbs.db
 # Streamlit local config
 .streamlit/
 
-# Ignore all datasets and generated data artifacts
-data/**
-!data/
-!data/.gitkeep
+# Ignore raw datasets and bulky generated intermediate data
+data/datasets/arxiv/arxiv-metadata-oai-snapshot.json
+data/raw_pdfs/
+data/extracted_text/
+data/chunks/
 
-# Ignore all model artifacts
-models/**
-!models/
-!models/.gitkeep
-.pkl
+# Ignore large or unnecessary local artifacts
+models/embeddings.npy
 
+# Keep runtime deployment artifacts in git
+!models/faiss_index.bin
+!models/embedding_metadata.jsonl
+!models/faiss_index_metadata.json
+!models/logistic_regression_pipeline.pkl
+!models/mlp_classifier_pipeline.pkl
+!models/label_encoder.pkl
 
-# Keep only source code, notebooks, reports, README, requirements, and env example in git
+# Keep source code, notebooks, reports, README, requirements, and env example in git
